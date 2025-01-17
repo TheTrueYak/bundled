@@ -1,0 +1,30 @@
+{
+	"schemaVersion": 1,
+	"id": "bundled",
+	"version": "${version}",
+	"name": "Bundled",
+	"description": "Reduces the size of unstackable items in bundles. Also adds a crafting recipe and tags for bundle manipulation.",
+	"authors": [
+		"TheTrueYak (Developer)",
+		"n1tr0n__ (Logo)"
+	],
+	"license": "MIT",
+	"icon": "assets/bundled/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"net.yak.bundled.Bundled"
+		]
+	},
+	"mixins": [
+		"bundled.mixins.json"
+	],
+	"depends": {
+		"fabricloader": ">=0.16.9",
+		"minecraft": "~1.20.1",
+		"java": ">=17"
+	},
+	"suggests": {
+		"another-mod": "*"
+	}
+}
