@@ -30,16 +30,14 @@ public abstract class BundleItemMixin extends Item {
 
 	@Inject(method = "getItemOccupancy", at = @At("RETURN"), cancellable = true)
 	private static void bundled$unstackablesLesserWeight(ItemStack stack, CallbackInfoReturnable<Integer> cir) {
-		if (stack.getMaxCount() == 1) { // makes unstackables weighted 16 instead of 64 in the bundle
-			if (stack.getItem() instanceof BundleItem || stack.isIn(Bundled.MAX_WEIGHT)) { // bundles themselves are still weighted 64
-				cir.setReturnValue(64);
-			}
-			else { // non-bundle items
-				cir.setReturnValue(16);
-			}
-		}
-		else if (stack.isIn(Bundled.MAX_WEIGHT)) {
+		if (stack.getItem() instanceof BundleItem || stack.isIn(Bundled.MAX_WEIGHT)) { // bundles themselves are still weighted 64, along with any item in max weight tag
 			cir.setReturnValue(64);
+		}
+		else if (stack.isIn(Bundled.QUARTER_WEIGHT) || (stack.getMaxCount() == 1 && !stack.isIn(Bundled.SIXTEENTH_WEIGHT))) { // quarter weight tag and unstackable default
+			cir.setReturnValue(16);
+		}
+		else if (stack.isIn(Bundled.SIXTEENTH_WEIGHT)) { // sixteenth weight tag
+			cir.setReturnValue(4);
 		}
 	}
 
