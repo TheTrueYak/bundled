@@ -1,6 +1,6 @@
 {
 	"pack": {
-		"pack_format": 15,
+		"pack_format": 48,
 		"description": "Makes the bundle crafted with fewer materials, like 1.21.2+ recipe"
 	}
 }

@@ -1,9 +1,8 @@
 {
     "type": "minecraft:crafting_shaped",
     "pattern": [
-        "SLS",
-        "L L",
-        "LLL"
+        "S",
+        "L"
     ],
     "key": {
         "S": {
@@ -14,7 +13,7 @@
         }
     },
 	"result": {
-        "item": "minecraft:bundle",
+        "id": "minecraft:bundle",
         "count": 1
     }
 }

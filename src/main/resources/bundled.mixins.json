@@ -3,7 +3,8 @@
 	"package": "net.yak.bundled.mixin",
 	"compatibilityLevel": "JAVA_17",
 	"mixins": [
-		"BundleItemMixin"
+		"BundleItemMixin",
+		"BundleContentsComponentMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1
