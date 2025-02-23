@@ -1,13 +1,14 @@
 package net.yak.bundled.mixin;
 
+import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import net.minecraft.item.BundleItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtList;
+import net.minecraft.screen.slot.Slot;
 import net.yak.bundled.Bundled;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.*;
@@ -29,31 +30,42 @@ public abstract class BundleItemMixin extends Item {
 		}
 	}
 
-	@Inject(method = "getItemOccupancy", at = @At("RETURN"), cancellable = true)
-	private static void bundled$unstackablesLesserWeight(ItemStack stack, CallbackInfoReturnable<Integer> cir) {
-		if (stack.getItem() instanceof BundleItem || stack.isIn(Bundled.MAX_WEIGHT)) { // bundles themselves are still weighted 64, along with any item in max weight tag
-			cir.setReturnValue(64);
+	@ModifyReturnValue(method = "getItemOccupancy", at = @At("RETURN"))
+	private static int bundled$unstackablesLesserWeight(int original, ItemStack stack) {
+		if (!(stack.getItem() instanceof BundleItem)) {
+			if (stack.isIn(Bundled.MAX_WEIGHT)) { // bundles themselves are still weighted 64, along with any item in max weight tag
+				return 64;
+			} else if (stack.isIn(Bundled.QUARTER_WEIGHT) || (stack.getMaxCount() == 1 && !stack.isIn(Bundled.SIXTEENTH_WEIGHT))) { // quarter weight tag and unstackable default
+				return 16;
+			} else if (stack.isIn(Bundled.SIXTEENTH_WEIGHT)) { // sixteenth weight tag
+				return 4;
+			}
 		}
-		else if (stack.isIn(Bundled.QUARTER_WEIGHT) || (stack.getMaxCount() == 1 && !stack.isIn(Bundled.SIXTEENTH_WEIGHT))) { // quarter weight tag and unstackable default
-			cir.setReturnValue(16);
-		}
-		else if (stack.isIn(Bundled.SIXTEENTH_WEIGHT)) { // sixteenth weight tag
-			cir.setReturnValue(4);
-		}
+		return original;
 	}
 
 	@WrapOperation(method = "onClicked", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/BundleItem;addToBundle(Lnet/minecraft/item/ItemStack;Lnet/minecraft/item/ItemStack;)I"))
 	private int bundled$preventItemInsertion(ItemStack bundle, ItemStack stack, Operation<Integer> original) {
-		if (stack.isIn(Bundled.CANNOT_NEST) || stack.getItem() instanceof BundleItem) { // prevents insertion if item is in no nest tag
+		if (stack.isIn(Bundled.CANNOT_NEST)) { // prevents insertion if item is in no nest tag
 			return 0;
+		}
+		if (stack.getItem() instanceof BundleItem) {
+			if (BundleItem.getAmountFilled(stack) != 0f) {
+				return 0;
+			}
 		}
 		return original.call(bundle, stack); // otherwise calls original
 	}
 
 	@WrapOperation(method = "onStackClicked", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/Item;canBeNested()Z"))
-	private boolean bundled$preventItemInsertion2(Item instance, Operation<Boolean> original) {
-		if (instance.getDefaultStack().isIn(Bundled.CANNOT_NEST) || instance instanceof BundleItem) { // prevents insertion if item is in no nest tag
+	private boolean bundled$preventItemInsertion2(Item instance, Operation<Boolean> original, ItemStack stack, Slot slot) {
+		if (instance.getDefaultStack().isIn(Bundled.CANNOT_NEST)) { // prevents insertion if item is in no nest tag
 			return false;
+		}
+		if (slot.getStack().getItem() instanceof BundleItem) {
+			if (BundleItem.getAmountFilled(slot.getStack()) != 0f) {
+				return false;
+			}
 		}
 		return original.call(instance); // otherwise calls original
 	}
