@@ -5,6 +5,7 @@ import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import net.minecraft.item.BundleItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtList;
 import net.yak.bundled.Bundled;
@@ -43,7 +44,7 @@ public abstract class BundleItemMixin extends Item {
 
 	@WrapOperation(method = "onClicked", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/BundleItem;addToBundle(Lnet/minecraft/item/ItemStack;Lnet/minecraft/item/ItemStack;)I"))
 	private int bundled$preventItemInsertion(ItemStack bundle, ItemStack stack, Operation<Integer> original) {
-		if (stack.isIn(Bundled.CANNOT_NEST)) { // prevents insertion if item is in no nest tag
+		if (stack.isIn(Bundled.CANNOT_NEST) || stack.getItem() instanceof BundleItem) { // prevents insertion if item is in no nest tag
 			return 0;
 		}
 		return original.call(bundle, stack); // otherwise calls original
@@ -51,15 +52,10 @@ public abstract class BundleItemMixin extends Item {
 
 	@WrapOperation(method = "onStackClicked", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/Item;canBeNested()Z"))
 	private boolean bundled$preventItemInsertion2(Item instance, Operation<Boolean> original) {
-		if (instance.getDefaultStack().isIn(Bundled.CANNOT_NEST)) { // prevents insertion if item is in no nest tag
+		if (instance.getDefaultStack().isIn(Bundled.CANNOT_NEST) || instance instanceof BundleItem) { // prevents insertion if item is in no nest tag
 			return false;
 		}
 		return original.call(instance); // otherwise calls original
-	}
-
-	@Override
-	public boolean canBeNested() {
-		return false;
 	}
 
 }
