@@ -34,7 +34,7 @@ public abstract class BundleItemMixin extends Item {
 
 	@WrapOperation(method = "onStackClicked", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/Item;canBeNested()Z"))
 	private boolean bundled$preventItemInsertion2(Item instance, Operation<Boolean> original, ItemStack stack, Slot slot) {
-		if (stack.isIn(Bundled.CANNOT_NEST)) { // prevents insertion if item is in no nest tag
+		if (slot.getStack().isIn(Bundled.CANNOT_NEST)) { // prevents insertion if item is in no nest tag
 			return false;
 		}
 		if (slot.getStack().get(DataComponentTypes.BUNDLE_CONTENTS) != null) { // checks for possible bundle component in stack
