@@ -3,6 +3,7 @@ package net.yak.bundled.mixin;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.BundleContentsComponent;
+import net.minecraft.item.BundleItem;
 import net.minecraft.item.ItemStack;
 import net.yak.bundled.Bundled;
 import org.apache.commons.lang3.math.Fraction;
@@ -26,6 +27,11 @@ public class BundleContentsComponentMixin {
             }
         }
         return original;
+    }
+
+    @ModifyReturnValue(method = "canBeBundled", at = @At("RETURN"))
+    private static boolean bundled$canBundle(boolean original, ItemStack stack) {
+        return original && !stack.isIn(Bundled.CANNOT_NEST) && BundleItem.getAmountFilled(stack) == 0f;
     }
 
 }
