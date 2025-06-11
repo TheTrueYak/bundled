@@ -18,11 +18,23 @@ public class BundleContentsComponentMixin {
             if (stack.isIn(Bundled.MAX_WEIGHT)) { // max weight tag
                 return Fraction.getFraction(1, 1);
             }
-            else if (stack.isIn(Bundled.QUARTER_WEIGHT) || (stack.getMaxCount() == 1 && !stack.isIn(Bundled.SIXTEENTH_WEIGHT))) { // quarter weight tag and default for unstackables
+            else if (stack.isIn(Bundled.HALF_WEIGHT)) { // half weight tag
+                return Fraction.getFraction(1, 2);
+            }
+            else if (stack.isIn(Bundled.QUARTER_WEIGHT) || (stack.getMaxCount() == 1 && (!stack.isIn(Bundled.SIXTEENTH_WEIGHT)) && !stack.isIn(Bundled.THIRTYSECOND_WEIGHT) && !stack.isIn(Bundled.SIXTYFOURTH_WEIGHT))) { // quarter weight tag and default for unstackables
                 return Fraction.getFraction(1, 4);
+            }
+            else if (stack.isIn(Bundled.EIGHTH_WEIGHT)) { // eighth weight tag
+                return Fraction.getFraction(1, 8);
             }
             else if (stack.isIn(Bundled.SIXTEENTH_WEIGHT)) { // sixteenth weight tag
                 return Fraction.getFraction(1, 16);
+            }
+            else if (stack.isIn(Bundled.THIRTYSECOND_WEIGHT)) { // thirtysecond weight tag
+                return Fraction.getFraction(1, 32);
+            }
+            else if (stack.isIn(Bundled.SIXTYFOURTH_WEIGHT)) { // sixtyfourth weight tag
+                return Fraction.getFraction(1, 64);
             }
         }
         return original;
